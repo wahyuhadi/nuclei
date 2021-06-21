@@ -53,17 +53,17 @@ func (r *Runner) getParsedTemplatesFor(templatePaths, severities []string, workf
 }
 
 // parseTemplateFile returns the parsed template file
-func (r *Runner) parseTemplateFile(file string) (*templates.Template, error) {
+func (l *Loader) parseTemplateFile(file string) (*templates.Template, error) {
 	executerOpts := protocols.ExecuterOptions{
-		Output:       r.output,
-		Options:      r.options,
-		Progress:     r.progress,
-		Catalog:      r.catalog,
-		IssuesClient: r.issuesClient,
-		RateLimiter:  r.ratelimiter,
-		Interactsh:   r.interactsh,
-		ProjectFile:  r.projectFile,
-		Browser:      r.browser,
+		Output:       l.options.output,
+		Options:      l.options.options,
+		Progress:     l.options.progress,
+		Catalog:      l.options.catalog,
+		IssuesClient: l.options.issuesClient,
+		RateLimiter:  l.options.ratelimiter,
+		Interactsh:   l.options.interactsh,
+		ProjectFile:  l.options.projectFile,
+		Browser:      l.options.browser,
 	}
 	template, err := templates.Parse(file, executerOpts)
 	if err != nil {
@@ -85,15 +85,6 @@ func (r *Runner) templateLogMsg(id, name, author, severity string) string {
 		message += " [" + r.severityColors.Data[severity] + "]"
 	}
 	return message
-}
-
-func (r *Runner) logAvailableTemplate(tplPath string) {
-	t, err := r.parseTemplateFile(tplPath)
-	if err != nil {
-		gologger.Error().Msgf("Could not parse file '%s': %s\n", tplPath, err)
-	} else {
-		gologger.Print().Msgf("%s\n", r.templateLogMsg(t.ID, types.ToString(t.Info["name"]), types.ToString(t.Info["author"]), types.ToString(t.Info["severity"])))
-	}
 }
 
 func hasMatchingSeverity(templateSeverity string, allowedSeverities []string) bool {

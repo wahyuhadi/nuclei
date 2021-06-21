@@ -51,13 +51,13 @@ func Parse(filePath string, options protocols.ExecuterOptions) (*Template, error
 	}
 	matchWithTags := false
 	if len(options.Options.Tags) > 0 {
-		if err := matchTemplateWithTags(types.ToString(templateTags), types.ToString(template.Info["severity"]), options.Options.Tags); err != nil {
+		if err := matchTemplateWithTags(types.ToString(templateTags), types.ToString(template.Info["severity"]), types.ToString(template.Info["author"]), options.Options.Tags); err != nil {
 			return nil, fmt.Errorf("tags filter not matched %s", templateTags)
 		}
 		matchWithTags = true
 	}
 	if len(options.Options.ExcludeTags) > 0 && !matchWithTags {
-		if err := matchTemplateWithTags(types.ToString(templateTags), types.ToString(template.Info["severity"]), options.Options.ExcludeTags); err == nil {
+		if err := matchTemplateWithTags(types.ToString(templateTags), types.ToString(template.Info["severity"]), types.ToString(template.Info["author"]), options.Options.ExcludeTags); err == nil {
 			return nil, fmt.Errorf("exclude-tags filter matched %s", templateTags)
 		}
 	}
@@ -207,10 +207,13 @@ func (t *Template) parseWorkflowTemplate(workflow *workflows.WorkflowTemplate, o
 }
 
 // matchTemplateWithTags matches if the template matches a tag
-func matchTemplateWithTags(tags, severity string, tagsInput []string) error {
+func matchTemplateWithTags(tags, severity, author string, tagsInput []string) error {
 	actualTags := strings.Split(tags, ",")
 	if severity != "" {
 		actualTags = append(actualTags, severity) // also add severity to tag
+	}
+	if author != "" {
+		actualTags = append(actualTags, author) // also add author to tag
 	}
 
 	matched := false

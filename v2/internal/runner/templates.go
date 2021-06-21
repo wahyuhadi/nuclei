@@ -6,6 +6,7 @@ import (
 
 	"github.com/karrick/godirwalk"
 	"github.com/projectdiscovery/gologger"
+	"github.com/projectdiscovery/nuclei/v2/pkg/types"
 )
 
 // ListAvailableTemplates prints available templates to stdout
@@ -38,5 +39,14 @@ func (r *Runner) listAvailableTemplates() {
 	// directory couldn't be walked
 	if err != nil {
 		gologger.Error().Msgf("Could not find templates in directory '%s': %s\n", r.templatesConfig.TemplatesDirectory, err)
+	}
+}
+
+func (r *Runner) logAvailableTemplate(tplPath string) {
+	t, err := r.parseTemplateFile(tplPath)
+	if err != nil {
+		gologger.Error().Msgf("Could not parse file '%s': %s\n", tplPath, err)
+	} else {
+		gologger.Print().Msgf("%s\n", r.templateLogMsg(t.ID, types.ToString(t.Info["name"]), types.ToString(t.Info["author"]), types.ToString(t.Info["severity"])))
 	}
 }
