@@ -497,6 +497,7 @@ func init() {
 		"to_string": makeDslFunction(1, func(args ...interface{}) (interface{}, error) {
 			return types.ToString(args[0]), nil
 		}),
+<<<<<<< HEAD
 		"hmac_sha256": makeDslFunction(2, func(args ...interface{}) (interface{}, error) {
 			h := hmac.New(sha256.New, []byte(args[1].(string)))
 			h.Write([]byte(args[0].(string)))
@@ -505,6 +506,14 @@ func init() {
 		"time_format": makeDslFunction(1, func(args ...interface{}) (interface{}, error) {
 			t := time.Now()
 			return string(t.Format(args[0].(string))), nil
+=======
+		"dec_to_hex": makeDslFunction(1, func(args ...interface{}) (interface{}, error) {
+			if number, ok := args[0].(float64); ok {
+				hexNum := strconv.FormatInt(int64(number), 16)
+				return types.ToString(hexNum), nil
+			}
+			return nil, fmt.Errorf("invalid number: %T", args[0])
+>>>>>>> a18935e58c43a7f05b6a9b1479556c3d8579d9cd
 		}),
 	}
 
